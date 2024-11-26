@@ -1,9 +1,7 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { OrderContext } from './OrderContext';
 import './App.css';
-
-const API_URL = process.env.REACT_APP_API_URL;
 
 function PaymentSuccess() {
 

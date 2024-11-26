@@ -16,103 +16,66 @@ function OrderEdit() {
   const [ menu, setMenu ] = useState({})
   const [ options, setOptions ] = useState([])
   const [ quantity, setQuantity ] = useState(1);
-  const [ tables, setTables ] = useState([])
-  const [ tableID, setTableID ] = useState(25);
   const [formState, setFormState] = useState({});
   const [openCategories, setOpenCategories] = useState({});
 
   useEffect(() => {
-    fetchMenu()
-    fetchTable()
-  }, [])
-
-  async function fetchMenu(){
-    try{
-      const _menu = orders.find((o) => o.menu_sequence = menu_sequence)
-      const response = await fetch(API_URL + '/api/menu/' + _menu.menu_id)
-      if (!response.ok) {
-        Swal.fire({
-          title: "เกิดข้อผิดพลาด!",
-          text: `ไม่สามารถโหลดข้อมูลได้ (Error: ${response.status})`,
-          icon: "error",
-          confirmButtonText: "ตกลง"
-        }).then(() => {
-          navigator('/order/list/')
-        });
-        return;
-      }
-
-      const data = await response.json()
-      setMenu(data[0])
-      
-      const optionsData = data[0].menu_se
-      setOptions(optionsData)
-
-      const existingOrder = orders.find((order) => order.menu_sequence === menu_sequence);
-  
-      if (existingOrder) {
-        const defaultForm = {};
-        for (const [key, value] of Object.entries(existingOrder.menu_se)) {
-          defaultForm[key] = value
+    const fetchMenu = async () => {
+      try{
+        const _menu = orders.find((o) => o.menu_sequence = menu_sequence)
+        const response = await fetch(API_URL + '/api/menu/' + _menu.menu_id)
+        if (!response.ok) {
+          Swal.fire({
+            title: "เกิดข้อผิดพลาด!",
+            text: `ไม่สามารถโหลดข้อมูลได้ (Error: ${response.status})`,
+            icon: "error",
+            confirmButtonText: "ตกลง"
+          }).then(() => {
+            navigator('/order/list/')
+          });
+          return;
         }
   
-        setFormState(defaultForm);
-        setQuantity(existingOrder.menu_quantity);
-      } else {
+        const data = await response.json()
+        setMenu(data[0])
+        
+        const optionsData = data[0].menu_se
+        setOptions(optionsData)
+  
+        const existingOrder = orders.find((order) => order.menu_sequence === menu_sequence);
+    
+        if (existingOrder) {
+          const defaultForm = {};
+          for (const [key, value] of Object.entries(existingOrder.menu_se)) {
+            defaultForm[key] = value
+          }
+    
+          setFormState(defaultForm);
+          setQuantity(existingOrder.menu_quantity);
+        } else {
+          Swal.fire({
+            title: "เกิดข้อผิดพลาด!",
+            text: "ไม่พบเมนูอาหาร",
+            icon: "error",
+            confirmButtonText: "ตกลง"
+          }).then(() => {
+            navigator("/order/list");
+          });
+        }
+      } catch (err) {
         Swal.fire({
           title: "เกิดข้อผิดพลาด!",
-          text: "ไม่พบเมนูอาหาร",
+          text: "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้",
           icon: "error",
           confirmButtonText: "ตกลง"
         }).then(() => {
           navigator("/order/list");
         });
       }
-    } catch (err) {
-      Swal.fire({
-        title: "เกิดข้อผิดพลาด!",
-        text: "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้",
-        icon: "error",
-        confirmButtonText: "ตกลง"
-      }).then(() => {
-        navigator("/order/list");
-      });
     }
-  }
 
-  async function fetchTable(){
-    try{
-      const response = await fetch(API_URL + '/api/tables')
-      if (!response.ok) {
-        Swal.fire({
-          title: "เกิดข้อผิดพลาด!",
-          text: `ไม่สามารถโหลดข้อมูลได้ (Error: ${response.status})`,
-          icon: "error",
-          confirmButtonText: "ตกลง"
-        }).then(() => {
-          navigator('/order/list/')
-        });
-        return;
-      }
-
-      const data = await response.json()
-      setTables(data)
-  
-      const existingOrder = orders.find((order) => order.menu_sequence === menu_sequence);
-  
-      setTableID(existingOrder.table_id)
-    } catch (error) {
-      Swal.fire({
-        title: "เกิดข้อผิดพลาด!",
-        text: "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้",
-        icon: "error",
-        confirmButtonText: "ตกลง"
-      }).then(() => {
-        navigator("/order/list");
-      });
-    }
-   
-  }
+    fetchMenu()
+  }, [])
 
   function calculatePrice(menuPrice, formState, options) {
     let price = parseFloat(menuPrice); // แปลงราคาหลักเป็น float
@@ -179,7 +142,6 @@ function OrderEdit() {
       'menu_quantity': quantity,
       'menu_pic': menu.menu_pic,
       'menu_se': formState,
-      'table_id': tableID
     })
     navigator('/order/list')
   }

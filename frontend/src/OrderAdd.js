@@ -15,102 +15,71 @@ function OrderAdd() {
   const { addOrder } = useContext(OrderContext);
 
   const [menu, setMenu] = useState({});
-  const [tables, setTables] = useState([]);
   const [options, setOptions] = useState([]);
   const [quantity, setQuantity] = useState(1);
-  const [tableID, setTableID] = useState(25);
   const [formState, setFormState] = useState({});
   const [openCategories, setOpenCategories] = useState({});
 
   useEffect(() => {
+    const fetchMenu = async () => {
+      try {
+        const response = await fetch(API_URL + "/api/menu/" + menu_id);
+        if (!response.ok) {
+          Swal.fire({
+            title: "เกิดข้อผิดพลาด!",
+            text: `ไม่สามารถโหลดข้อมูลได้ (Error: ${response.status})`,
+            icon: "error",
+            confirmButtonText: "ตกลง"
+          }).then(() => {
+            navigator('/order/list/')
+          });
+          return;
+        }
+  
+        const data = await response.json();
+        setMenu(data[0]);
+  
+        const optionsData = data[0].menu_se;
+        setOptions(optionsData);
+  
+        const defaultForm = {};
+        for (let i = 0; i < optionsData.length; i++) {
+          const option = optionsData[i];
+          if (option.type === "radio") {
+            defaultForm[option.id] = [];
+          }
+        }
+  
+        for (let i = 0; i < optionsData.length; i++) {
+          const option = optionsData[i];
+          if (option.type === "multi-select") {
+            defaultForm[option.id] = [];
+          }
+        }
+  
+        for (let i = 0; i < optionsData.length; i++) {
+          const option = optionsData[i];
+          if (option.type === "text") {
+            defaultForm[option.id] = "";
+          }
+        }
+  
+        setFormState(defaultForm);
+      } catch (error) {
+        Swal.fire({
+          title: "เกิดข้อผิดพลาด!",
+          text: "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้",
+          icon: "error",
+          confirmButtonText: "ตกลง"
+        }).then(() => {
+          navigator("/order/list");
+        });
+      }
+    }
+
     fetchMenu();
-    fetchTable();
   }, []);
-
-  async function fetchMenu() {
-    try {
-      const response = await fetch(API_URL + "/api/menu/" + menu_id);
-      if (!response.ok) {
-        Swal.fire({
-          title: "เกิดข้อผิดพลาด!",
-          text: `ไม่สามารถโหลดข้อมูลได้ (Error: ${response.status})`,
-          icon: "error",
-          confirmButtonText: "ตกลง"
-        }).then(() => {
-          navigator('/order/list/')
-        });
-        return;
-      }
-
-      const data = await response.json();
-      setMenu(data[0]);
-
-      const optionsData = data[0].menu_se;
-      setOptions(optionsData);
-
-      const defaultForm = {};
-      for (let i = 0; i < optionsData.length; i++) {
-        const option = optionsData[i];
-        if (option.type === "radio") {
-          defaultForm[option.id] = [];
-        }
-      }
-
-      for (let i = 0; i < optionsData.length; i++) {
-        const option = optionsData[i];
-        if (option.type === "multi-select") {
-          defaultForm[option.id] = [];
-        }
-      }
-
-      for (let i = 0; i < optionsData.length; i++) {
-        const option = optionsData[i];
-        if (option.type === "text") {
-          defaultForm[option.id] = "";
-        }
-      }
-
-      setFormState(defaultForm);
-    } catch (error) {
-      Swal.fire({
-        title: "เกิดข้อผิดพลาด!",
-        text: "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้",
-        icon: "error",
-        confirmButtonText: "ตกลง"
-      }).then(() => {
-        navigator("/order/list");
-      });
-    }
-  }
-
-  async function fetchTable() {
-    try{
-      const response = await fetch(API_URL + "/api/tables");
-      if (!response.ok) {
-        Swal.fire({
-          title: "เกิดข้อผิดพลาด!",
-          text: `ไม่สามารถโหลดข้อมูลได้ (Error: ${response.status})`,
-          icon: "error",
-          confirmButtonText: "ตกลง"
-        }).then(() => {
-          navigator('/order/list/')
-        });
-        return;
-      }
-
-      const data = await response.json();
-      setTables(data);
-    } catch (error) {
-      Swal.fire({
-        title: "เกิดข้อผิดพลาด!",
-        text: "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้",
-        icon: "error",
-        confirmButtonText: "ตกลง"
-      }).then(() => {
-        navigator("/order/list");
-      });
-    }
-  }
+  
 
   function calculatePrice(menuPrice, formState, options) {
     let price = parseFloat(menuPrice); // แปลงราคาหลักเป็น float
@@ -180,8 +149,7 @@ function OrderAdd() {
       menu_price: calculatePrice(menu.menu_price, formState, options),
       menu_quantity: quantity,
       menu_pic: menu.menu_pic,
-      menu_se: formState,
-      table_id: tableID,
+      menu_se: formState
     });
     navigator("/order/list");
   }

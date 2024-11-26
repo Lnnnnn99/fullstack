@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { OrderContext } from './OrderContext';
 import Swal from "sweetalert2";
 import './App.css';
@@ -11,7 +11,6 @@ function Summary() {
   const navigator = useNavigate()
   const { orders } = useContext(OrderContext)
 
-  const [ error, setError ] = useState()
   const [ tables, setTables ] = useState([])
   const [ tableID, setTableID ] = useState(-1);
   
@@ -20,38 +19,40 @@ function Summary() {
   )
 
   useEffect(() => {
-    fetchTable()
-  }, [])
+    const fetchTable = async () => {
+      try{
+        const response = await fetch(API_URL + '/api/tables')
+        
+        if (!response.ok) {
+          Swal.fire({
+            title: "เกิดข้อผิดพลาด!",
+            text: `ไม่สามารถโหลดข้อมูลได้ (Error: ${response.status})`,
+            icon: "error",
+            confirmButtonText: "ตกลง"
+          }).then(() => {
+            navigator('/order/list/')
+          });
+          return;
+        }
   
-  async function fetchTable(){
-    try{
-      const response = await fetch(API_URL + '/api/tables')
-      
-      if (!response.ok) {
+        const data = await response.json()
+        setTables(data)
+      } catch (error) {
         Swal.fire({
           title: "เกิดข้อผิดพลาด!",
-          text: `ไม่สามารถโหลดข้อมูลได้ (Error: ${response.status})`,
+          text: "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้",
           icon: "error",
           confirmButtonText: "ตกลง"
         }).then(() => {
-          navigator('/order/list/')
+          navigator("/order/list");
         });
-        return;
       }
-
-      const data = await response.json()
-      setTables(data)
-    } catch (error) {
-      Swal.fire({
-        title: "เกิดข้อผิดพลาด!",
-        text: "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้",
-        icon: "error",
-        confirmButtonText: "ตกลง"
-      }).then(() => {
-        navigator("/order/list");
-      });
     }
-  }
+
+    fetchTable()
+  }, [])
+  
+  
 
   async function confirmOrder(){
     try{

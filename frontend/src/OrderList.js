@@ -17,71 +17,72 @@ function OrderList() {
   const [selectedType, setSelectedType] = useState('All')
 
   useEffect(() => {
+    const fetchMenus = async () => {
+      try{
+        const response = await fetch(API_URL + "/api/menus")
+        
+        if (!response.ok) {
+          Swal.fire({
+            title: "เกิดข้อผิดพลาด!",
+            text: `ไม่สามารถโหลดข้อมูลได้ (Error: ${response.status})`,
+            icon: "error",
+            confirmButtonText: "ตกลง"
+          }).then(() => {
+            navigator('/order/list/')
+          });
+          return;
+        }
+  
+        const data = await response.json()
+        setMenus(data)
+        setFilterMenu(data)
+      } catch (error) {
+        Swal.fire({
+          title: "เกิดข้อผิดพลาด!",
+          text: "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้",
+          icon: "error",
+          confirmButtonText: "ตกลง"
+        }).then(() => {
+          navigator("/order/list");
+        });
+      }
+    }
+  
+    const fetchTypes = async () => {
+      try{
+        const response = await fetch(API_URL + "/api/types")
+      
+        if (!response.ok) {
+          Swal.fire({
+            title: "เกิดข้อผิดพลาด!",
+            text: `ไม่สามารถโหลดข้อมูลได้ (Error: ${response.status})`,
+            icon: "error",
+            confirmButtonText: "ตกลง"
+          }).then(() => {
+            navigator('/order/list/')
+          });
+          return;
+        }
+  
+        const data = await response.json()
+        setTypes([{'menu_type': 'All'}, ...data])
+      } catch (error) {
+        Swal.fire({
+          title: "เกิดข้อผิดพลาด!",
+          text: "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้",
+          icon: "error",
+          confirmButtonText: "ตกลง"
+        }).then(() => {
+          navigator("/order/list");
+        });
+      }
+  
+    }
+    
     fetchMenus()
     fetchTypes()
   }, [])
 
-  async function fetchMenus(){
-    try{
-      const response = await fetch(API_URL + "/api/menus")
-      
-      if (!response.ok) {
-        Swal.fire({
-          title: "เกิดข้อผิดพลาด!",
-          text: `ไม่สามารถโหลดข้อมูลได้ (Error: ${response.status})`,
-          icon: "error",
-          confirmButtonText: "ตกลง"
-        }).then(() => {
-          navigator('/order/list/')
-        });
-        return;
-      }
-
-      const data = await response.json()
-      setMenus(data)
-      setFilterMenu(data)
-    } catch (error) {
-      Swal.fire({
-        title: "เกิดข้อผิดพลาด!",
-        text: "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้",
-        icon: "error",
-        confirmButtonText: "ตกลง"
-      }).then(() => {
-        navigator("/order/list");
-      });
-    }
-  }
-
-  async function fetchTypes(){
-    try{
-      const response = await fetch(API_URL + "/api/types")
-    
-      if (!response.ok) {
-        Swal.fire({
-          title: "เกิดข้อผิดพลาด!",
-          text: `ไม่สามารถโหลดข้อมูลได้ (Error: ${response.status})`,
-          icon: "error",
-          confirmButtonText: "ตกลง"
-        }).then(() => {
-          navigator('/order/list/')
-        });
-        return;
-      }
-
-      const data = await response.json()
-      setTypes([{'menu_type': 'All'}, ...data])
-    } catch (error) {
-      Swal.fire({
-        title: "เกิดข้อผิดพลาด!",
-        text: "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้",
-        icon: "error",
-        confirmButtonText: "ตกลง"
-      }).then(() => {
-        navigator("/order/list");
-      });
-    }
-
-  }
 
   function updateFilterMenu(type){
     if(type === "All"){
@@ -92,7 +93,7 @@ function OrderList() {
     else
     {
       setFilterMenu(menus
-        .filter((menu) => menu.menu_type == type)
+        .filter((menu) => menu.menu_type === type)
         .filter((menu) => menu.menu_name.toLowerCase().includes(search.toLowerCase()))
       )
     }
@@ -106,7 +107,7 @@ function OrderList() {
       )
     }else{
       setFilterMenu(menus
-        .filter((menu) => menu.menu_type == selectedType)
+        .filter((menu) => menu.menu_type === selectedType)
         .filter((menu) => menu.menu_name.toLowerCase().includes(search.toLowerCase()))
       )
     }
