@@ -9,7 +9,7 @@ const API_URL = process.env.REACT_APP_API_URL;
 
 function OrderList() {
   const navigator = useNavigate()
-
+  
   const [menus, setMenus] = useState(null)
   const [filterMenu, setFilterMenu] = useState([])
   const [types, setTypes] = useState([{'menu_type': 'All'}])
@@ -82,7 +82,6 @@ function OrderList() {
     fetchMenus()
     fetchTypes()
   }, [])
-
 
   function updateFilterMenu(type){
     if(type === "All"){
