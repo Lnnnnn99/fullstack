@@ -134,20 +134,35 @@ function OrderEdit() {
   };
 
   function confirmButton(){
-    updateOrder({
-      'menu_sequence': menu_sequence,
-      'menu_id': menu.menu_id,
-      'menu_name': menu.menu_name,
-      'menu_price': calculatePrice(menu.menu_price, formState, options),
-      'menu_quantity': quantity,
-      'menu_pic': menu.menu_pic,
-      'menu_se': formState,
-    })
-    navigator('/order/list')
+    Swal.fire({
+      title: "ต้องการลบรายการออกจากตะกร้าใช่หรือไหม",
+      showCancelButton: true,
+      confirmButtonText: "ลบรายการ",
+      cancelButtonText: `ยกเลิก`
+    }).then((result) => {
+      if (result.isConfirmed) {
+        updateOrder({
+          'menu_sequence': menu_sequence,
+          'menu_id': menu.menu_id,
+          'menu_name': menu.menu_name,
+          'menu_price': calculatePrice(menu.menu_price, formState, options),
+          'menu_quantity': quantity,
+          'menu_pic': menu.menu_pic,
+          'menu_se': formState,
+        })
+        navigator('/order/list')
+      }
+    });
   }
 
   return (
     <div className='menu-detail-container'>
+      <div className="menu-operator">
+        <div className="operator-item" onClick={() => navigator("/order/list")}>
+          <i class="fa-solid fa-arrow-left"></i>
+        </div>
+      </div>
+      
       <div className="menu-header">
         <img className="menu-header-image" src={"/images/" + menu.menu_pic} alt={menu.menu_pic} />
         <h1 className="menu-header-name">{menu.menu_name}</h1>
@@ -224,7 +239,7 @@ function OrderEdit() {
 
       <div className="menu-actions">
         <button className="cancel-btn" onClick={() => navigator('/order/list')}>ยกเลิก</button>
-        <button className="confirm-btn" onClick={confirmButton}>ยืนยัน</button>
+        <button className="confirm-btn" onClick={confirmButton}>{quantity > 0 ? 'ยืนยัน' : 'ลบ' }</button>
       </div>
 
     </div>

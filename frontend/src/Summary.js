@@ -148,6 +148,9 @@ function Summary() {
     <div class="order-summary-container">
 
       <div class="order-summary-header">
+        <div className="operator-item" style={{position: 'absolute', bottom: '18px'}} onClick={() => navigator("/order/list")}>
+            <i class="fa-solid fa-arrow-left"></i>
+        </div>
         <h1 class="order-summary-title">รายการอาหาร</h1>
         <button class="add-more-button" onClick={() => navigator('/order/list')}>สั่งอาหารเพิ่มเติม</button>
       </div>

@@ -46,7 +46,8 @@ function OrderAdd() {
         for (let i = 0; i < optionsData.length; i++) {
           const option = optionsData[i];
           if (option.type === "radio") {
-            defaultForm[option.id] = [];
+            // defaultForm[option.id] = []; ของเก่า
+            defaultForm[option.id] = [option.choices[0].value]; // แก้เป็น
           }
         }
   
@@ -124,7 +125,7 @@ function OrderAdd() {
 
     setFormState((prevState) => {
       if (type === "radio") {
-        return { ...prevState, size: ["small"] };
+        return { ...prevState, [name]: [value] };
       } else if (type === "checkbox") {
         const currentValues = prevState[name] || [];
         if (checked) {
@@ -156,6 +157,12 @@ function OrderAdd() {
 
   return (
     <div className="menu-detail-container">
+      <div className="menu-operator">
+        <div className="operator-item" onClick={() => navigator("/order/list")}>
+          <i class="fa-solid fa-arrow-left"></i>
+        </div>
+      </div>
+
       <div className="menu-header">
         <img
           className="menu-header-image"
@@ -194,7 +201,7 @@ function OrderAdd() {
                       checked={formState[option.id]?.[0] === choice.value}
                       onChange={handleOnChange}
                     />
-                    {choice.label}{" "}
+                    <span className="menu-option-name">{choice.label}</span>
                     <span className="menu-option-price">฿{choice.price}</span>
                   </label>
                 ))}

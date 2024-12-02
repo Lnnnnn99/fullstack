@@ -1,5 +1,5 @@
 -- ใช้ฐานข้อมูล
-USE sample_database_3;
+USE sample_2;
 
 -- เพิ่มข้อมูลตัวอย่างในตาราง `menu`
 INSERT INTO tab_menu (menu_name, menu_type, menu_price, menu_pic, menu_description, menu_status, menu_sales, menu_se)
@@ -9,7 +9,7 @@ VALUES
     ("ก๋วยเตี๋ยวเย็นตาโฟ", "ก๋วยเตี๋ยว", 30, "ก๋วยเตี๋ยวเย็นตาโฟ.jpg", "", 1, 0, '[{"id":"noodles","label":"เส้น","type":"radio","choices":[{"value":"big","label":"เส้นใหญ่","price":0},{"value":"small","label":"เส้นเล็ก","price":0},{"value":"noodle","label":"เส้นบะหมี่","price":0},{"value":"vermicelli","label":"วุ้นเส้น","price":0},{"value":"mama","label":"มาม่า","price":0}]},{"id":"size","label":"ขนาด","type":"multi-select","choices":[{"value":"special","label":"พิเศษ","price":5}]},{"id":"more","label":"เพิ่มเติม","type":"text"}]'),
     ("ก๋วยเตี๋ยวต้มยำ", "ก๋วยเตี๋ยว", 30, "ก๋วยเตี๋ยวต้มยำ.jpg", "", 1, 0, '[{"id":"noodles","label":"เส้น","type":"radio","choices":[{"value":"big","label":"เส้นใหญ่","price":0},{"value":"small","label":"เส้นเล็ก","price":0},{"value":"noodle","label":"เส้นบะหมี่","price":0},{"value":"vermicelli","label":"วุ้นเส้น","price":0},{"value":"mama","label":"มาม่า","price":0}]},{"id":"size","label":"ขนาด","type":"multi-select","choices":[{"value":"special","label":"พิเศษ","price":5}]},{"id":"more","label":"เพิ่มเติม","type":"text"}]'),
     ("ก๋วยเตี๋ยวไก่", "ก๋วยเตี๋ยว", 30, "ก๋วยเตี๋ยวไก่.jpg", "", 1, 0, '[{"id":"noodles","label":"เส้น","type":"radio","choices":[{"value":"big","label":"เส้นใหญ่","price":0},{"value":"small","label":"เส้นเล็ก","price":0},{"value":"noodle","label":"เส้นบะหมี่","price":0},{"value":"vermicelli","label":"วุ้นเส้น","price":0},{"value":"mama","label":"มาม่า","price":0}]},{"id":"size","label":"ขนาด","type":"multi-select","choices":[{"value":"special","label":"พิเศษ","price":5}]},{"id":"more","label":"เพิ่มเติม","type":"text"}]'),
-    ("ข้าวขาหมู", "ข้าว", 40, "ข้าวขาหมู.jpg", "", 1, 0, '[{"id":"noodles","label":"เส้น","type":"radio","choices":[{"value":"big","label":"เส้นใหญ่","price":0},{"value":"small","label":"เส้นเล็ก","price":0},{"value":"noodle","label":"เส้นบะหมี่","price":0},{"value":"vermicelli","label":"วุ้นเส้น","price":0},{"value":"mama","label":"มาม่า","price":0}]},{"id":"size","label":"ขนาด","type":"multi-select","choices":[{"value":"special","label":"พิเศษ","price":5}]},{"id":"more","label":"เพิ่มเติม","type":"text"}]'),
+    ("ข้าวขาหมู", "ข้าว", 40, "ข้าวขาหมู.jpg", "", 1, 0, '[{"id":"size","label":"ขนาด","type":"multi-select","choices":[{"value":"special","label":"พิเศษ","price":10}]},{"id":"more","label":"เพิ่มเติม","type":"text"}]'),
     ("ข้าวเปล่า", "ข้าว", 10, "ข้าวเปล่า.jpg", "", 1, 0, '[{"id":"more","label":"เพิ่มเติม","type":"text"}]'),
     ("เกี๊ยวทอด", "ของทานเล่น", 20, "เกี๊ยวทอด.jpg", "", 1, 0, '[{"id":"more","label":"เพิ่มเติม","type":"text"}]'),
     ("แคบหมู", "ของทานเล่น", 15, "แคบหมู.jpg", "", 1, 0, '[{"id":"more","label":"เพิ่มเติม","type":"text"}]'),

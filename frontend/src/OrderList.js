@@ -119,6 +119,7 @@ function OrderList() {
 
   return (
     <div className='container'>
+      
       <header className='header'>
         <div className="header-left">
           <h1>ก๋วยเตี๋ยวขาหมูกรุงศรีอยุธยา</h1>
@@ -137,19 +138,21 @@ function OrderList() {
         </div>
       </header>
 
-      <div className='filter-bar'>
-        {
-          types.map((type) => (
-            <button 
-              key={type.menu_type}
-              className={`filter-btn ${
-                type.menu_type === selectedType ? "active" : ""
-              }`} 
-              onClick={() => updateFilterMenu(type.menu_type)}>
-              {type.menu_type}
-            </button>
-          ))
-        }
+      <div class="filter-menu-wrapper">
+        <div className='filter-bar'>
+          {
+            types.map((type) => (
+              <button 
+                key={type.menu_type}
+                className={`filter-btn ${
+                  type.menu_type === selectedType ? "active" : ""
+                }`} 
+                onClick={() => updateFilterMenu(type.menu_type)}>
+                {type.menu_type}
+              </button>
+            ))
+          }
+        </div>
       </div>
 
       <div className='menu-grid'>
