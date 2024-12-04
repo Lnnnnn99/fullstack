@@ -24,14 +24,14 @@ function AdminTableList() {
     fetchTables();
   }, []);
 
-  const updateTableStatus = async (table_id, table_number, newStatus) => {
+  const updateTableStatus = async (table_id, newStatus) => {
     try {
-      const response = await fetch(`${API_URL}/api/table/${table_id}`, {
+      const response = await fetch(`${API_URL}/api/table/status/${table_id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ table_number:table_number, table_status: newStatus }),
+        body: JSON.stringify({ table_status: newStatus }),
       });
 
       if (!response.ok) throw new Error("Failed to update status");
@@ -106,7 +106,10 @@ function AdminTableList() {
                       <label>
                         <input
                           type="checkbox"
-                          
+                          checked={table.table_status == 1}
+                          onChange={() =>
+                            updateTableStatus(table.table_id, table.table_status == 1 ? 0 : 1)
+                          }
                         />
                         เปลี่ยนสถานะ
                       </label>

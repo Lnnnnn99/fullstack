@@ -210,7 +210,7 @@ function OrderAdd() {
       <div className="menu-header">
         <img
           className="menu-header-image"
-          src={"/images/" + menu.menu_pic}
+          src={API_URL + menu.menu_pic}
           alt={menu.menu_pic}
         />
         <h1 className="menu-header-name">{menu.menu_name}</h1>

@@ -161,7 +161,7 @@ function Summary() {
             orders.map((order) => (
               <div class="order-summary-item" key={order.menu_sequence}>
 
-                <img class="item-image" src={"/images/" + order.menu_pic} alt={order.menu_pic} />
+                <img class="item-image" src={API_URL + order.menu_pic} alt={order.menu_pic} />
           
                 <div class="item-details">
                   <div class="item-name">{order.menu_name} X {order.menu_quantity}</div>

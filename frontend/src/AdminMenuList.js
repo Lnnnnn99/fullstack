@@ -45,7 +45,6 @@ function AdminMenuList() {
 		fetchMenus()
 	}, [])
 
-  // ฟังก์ชันสำหรับลบเมนู
   const deleteMenu = async (menu_id) => {
     try {
       const response = await fetch(`${API_URL}/api/menu`, {
@@ -53,7 +52,7 @@ function AdminMenuList() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ menu_id }), // ส่ง menu_id ใน body
+        body: JSON.stringify({ menu_id }),
       });
 
       if (!response.ok) {
@@ -68,7 +67,6 @@ function AdminMenuList() {
         confirmButtonText: "ตกลง",
       });
 
-      // อัปเดตข้อมูลเมนูหลังลบ
       setMenus((prevMenus) => prevMenus.filter((menu) => menu.menu_id !== menu_id));
     } catch (error) {
       Swal.fire({
@@ -77,6 +75,29 @@ function AdminMenuList() {
         icon: "error",
         confirmButtonText: "ตกลง",
       });
+    }
+  };
+
+  const updateMenuStatus = async (menu_id, newStatus) => {
+    try {
+      const response = await fetch(`${API_URL}/api/menu/status/${menu_id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ menu_status: newStatus }),
+      });
+
+      if (!response.ok) throw new Error("Failed to update status");
+      setMenus((prev) =>
+        prev.map((menu) =>
+          menu.menu_id === menu_id
+            ? { ...menu, menu_status: newStatus }
+            : menu
+        )
+      );
+    } catch (error) {
+      Swal.fire("Error", "Failed to update table status.", "error");
     }
   };
 
@@ -100,7 +121,7 @@ function AdminMenuList() {
             menus.map((menu) => (
               <div className="food-item" key={menu.menu_id}>
                 <img 
-                  src="https://via.placeholder.com/100" 
+                  src={API_URL + menu.menu_pic} 
                   alt={"Food Image" + menu.menu_id}
                   className="food-image"
                   onClick={() => navigator('/admin/menu/edit/' + menu.menu_id)}
@@ -108,9 +129,17 @@ function AdminMenuList() {
                 <div className="food-details">
                   <h3 className="food-name">{menu.menu_name}</h3>
                   <p className="food-price">฿{menu.menu_price}</p>
+                  <button class="edit-button" style={{marginRight: '10px'}} onClick={() => navigator('/admin/menu/edit/' + menu.menu_id)}>แก้ไข</button>
+                  <button class="edit-button" style={{color: 'red'}} onClick={() => deleteMenu(menu.menu_id)}>ลบ</button>
                 </div>
                 <div className="food-checkbox">
-                  <input type="checkbox" id="food-1" />
+                  <input 
+                    type="checkbox"
+                    checked={menu.menu_status == 1}
+                    onChange={() =>
+                      updateMenuStatus(menu.menu_id, menu.menu_status == 1 ? 0 : 1)
+                    }
+                   />
                 </div>
               </div>
             ))

@@ -170,9 +170,9 @@ function OrderList() {
 
       <div className='menu-grid'>
         {
-          filterMenu.map((menu) => (
+          filterMenu.filter((menu) => menu.menu_status == 1).map((menu) => (
             <div className="menu-item" key={menu.menu_id} onClick={() => clickAddOrder(menu.menu_id)}>
-              <img className='menu-item-image' src={"/images/" + menu.menu_pic} alt={menu.menu_pic}/>
+              <img className='menu-item-image' src={API_URL + menu.menu_pic} alt={menu.menu_pic}/>
               <span className='menu-item-name'>{menu.menu_name}</span>
               <span className='menu-item-price'>{menu.menu_price}</span>
             </div>

@@ -24,29 +24,6 @@ function EmployeeTableList() {
     fetchTables();
   }, []);
 
-  const updateTableStatus = async (table_id, table_number, newStatus) => {
-    try {
-      const response = await fetch(`${API_URL}/api/table/${table_id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ table_number:table_number, table_status: newStatus }),
-      });
-
-      if (!response.ok) throw new Error("Failed to update status");
-      setTables((prev) =>
-        prev.map((table) =>
-          table.table_id === table_id
-            ? { ...table, table_status: newStatus }
-            : table
-        )
-      );
-    } catch (error) {
-      Swal.fire("Error", "Failed to update table status.", "error");
-    }
-  };
-
   return (
     <div className='admin-container'>
       <header className="admin-header">
@@ -69,15 +46,12 @@ function EmployeeTableList() {
           </span>
         </div>
         <div className="table-grid">
-          {/* <div className="table-card available">โต๊ะ 1</div>
-          <div className="table-card unavailable">โต๊ะ 2</div>
-          <div className="table-card available">โต๊ะ 3</div>
-          <div className="table-card unavailable">โต๊ะ 4</div>
-          <div className="table-card available">โต๊ะ 5</div> */}
           {
             tables.map((table) => (
               <div>
-                <div className="table-card available" onClick={() => navigate('/employee/order/' + table.table_id)}>โต๊ะ {table.table_number}</div>
+                <div 
+                  className={`table-card ${table.table_status == 0 ? 'available' : 'unavailable'}`}
+                  onClick={() => navigate('/employee/order/' + table.table_id)}>โต๊ะ {table.table_number}</div>
               </div>              
             ))
           }
