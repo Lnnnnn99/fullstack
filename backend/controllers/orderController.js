@@ -64,3 +64,17 @@ exports.updateOrderPaymentType = (req, res) => {
         res.json(results)
     })
 }
+
+exports.updateOrderStatus = (req, res) => {
+    const order_id = req.body.order_id
+    const order_status = req.body.order_status
+
+    const query = "UPDATE tab_order SET order_status = ? WHERE order_id = ?"
+
+    conn.query(query, [order_status, order_id], (err, results) => {
+        if(err){
+           return res.json(err) 
+        }
+        res.json(results)
+    })
+}

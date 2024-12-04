@@ -15,7 +15,7 @@ function AdminMenuEdit() {
     type: "",
     image: null,
     description: "",
-    status: "available",
+    status: "1",
     sold: 0,
     options: "",
   });
@@ -38,7 +38,7 @@ function AdminMenuEdit() {
           type: menu.menu_type,
           image: null, // ไม่ดึงไฟล์รูปกลับมา แต่ต้องให้ผู้ใช้อัปโหลดใหม่ถ้าจะแก้ไข
           description: menu.menu_description,
-          status: menu.menu_status === "1" ? "1" : "0",
+          status: menu.menu_status == "1" ? "1" : "0",
           sold: menu.menu_sales,
           options: JSON.stringify(menu.menu_se),
         });
@@ -102,13 +102,14 @@ function AdminMenuEdit() {
         <div class="admin-header-left">
           <button class="header-button" onClick={() => navigate('/admin/menu/list')}>Back</button>
         </div>
-        <h1 class="admin-header-title">Table Management</h1>
+        <h1 class="admin-header-title">Management</h1>
         <div class="admin-header-right">
           <span class="admin-header-user">Hello, Admin</span>
         </div>
       </header>
 
       <main className="admin-content">
+      <h2 className="content-header">Edit Menu</h2>
       <form className="admin-form" onSubmit={handleSubmit}>
           {/* Row 1: ชื่อเมนูอาหาร, ราคา, ชนิด */}
           <div className="form-row">

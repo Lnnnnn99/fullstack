@@ -69,20 +69,22 @@ function AdminEmployeeList() {
         <div class="admin-header-left">
           <button class="header-button" onClick={() => navigate('/admin/menu')}>Menu</button>
         </div>
-        <h1 class="admin-header-title">Table Management</h1>
+        <h1 class="admin-header-title">Management</h1>
         <div class="admin-header-right">
           <span class="admin-header-user">Hello, Admin</span>
         </div>
       </header>
 
       <main className="admin-content">
-        <h2 className="content-header">Table</h2>
+        <h2 className="content-header">Employee</h2>
 
-        <div className="table-grid">
+        <div className="table-grid table-grid-row">
           {
             employees.map((employee) => (
               <div>
-                <div className="table-card available" onClick={() => navigate('/admin/employee/edit/' + employee.employee_id)}></div>
+                <div className="table-card table-card-row available" onClick={() => navigate('/admin/employee/edit/' + employee.employee_id)}>
+                  <i class="fa-regular fa-circle-user"></i>
+                </div>
 
                 <div className="table-info">
                   <div className="table-message">
@@ -92,7 +94,10 @@ function AdminEmployeeList() {
                     <label>
                       <input
                         type="checkbox"
-                        
+                        checked={employee.employee_status == 1}
+                          onChange={() =>
+                            updateEmployeeStatus(employee.employee_id, employee.employee_status == 1 ? 0 : 1)
+                          }
                       />
                     </label>
                   </div>
@@ -102,52 +107,10 @@ function AdminEmployeeList() {
           }
         </div>
 
-        {/* <table>
-          <tbody>
-            {
-              employees.map((employee) => (
-                <tr key={employee.employee_id}>
-                  <td>{employee.employee_name}</td>
-                  <td>
-                    <input
-                      type="checkbox"
-                      checked={employee.employee_status === 1}
-                      onChange={() =>
-                        updateEmployeeStatus(employee.employee_id, employee.employee_status === 1 ? 0 : 1)
-                      }
-                    />
-                  </td>
-                  <td>
-                    {employee.employee_role === 0
-                      ? "Admin"
-                      : employee.employee_role === 1
-                      ? "Employee"
-                      : "Chef"}
-                  </td>
-                  <td>
-                    <button
-                      onClick={() =>
-                        navigate(`/admin/employee/edit/${employee.employee_id}`)
-                      }
-                    >
-                      Edit
-                    </button>
-                    <button onClick={() => deleteEmployee(employee.employee_id)}>
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))
-            }
-          </tbody>
-        </table> */}
-
       </main>
 
       <footer class="admin-footer">
         <button class="footer-button" onClick={() => navigate("/admin/employee/add")}>Add Employee</button>
-
-        <p>&copy; 2024 Admin Dashboard. All rights reserved.</p>
       </footer>
     </div>
   );

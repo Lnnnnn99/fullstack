@@ -83,7 +83,7 @@ function AdminTableList() {
         <div class="admin-header-left">
           <button class="header-button" onClick={() => navigate('/admin/menu')}>Menu</button>
         </div>
-        <h1 class="admin-header-title">Table Management</h1>
+        <h1 class="admin-header-title">Management</h1>
         <div class="admin-header-right">
           <span class="admin-header-user">Hello, Admin</span>
         </div>
@@ -100,7 +100,7 @@ function AdminTableList() {
 
                   <div className="table-info">
                     <div className="table-message">
-                      {table.status === 1 ? "สถานะ: ว่าง" : "สถานะ: ไม่ว่าง"}
+                      {table.table_status == 0 ? "สถานะ: ว่าง" : "สถานะ: ไม่ว่าง"}
                     </div>
                     <div className="table-checkbox">
                       <label>

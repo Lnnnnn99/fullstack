@@ -116,7 +116,7 @@ function AdminMenuList() {
       <main className="admin-content">
         <h2 className="content-header">Food Menu</h2>
         <div className="food-list">
-          <div class="food-category">Appetizers</div>
+          {/* <div class="food-category">Appetizers</div> */}
           {
             menus.map((menu) => (
               <div className="food-item" key={menu.menu_id}>

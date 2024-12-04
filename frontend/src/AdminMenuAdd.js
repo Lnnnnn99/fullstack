@@ -70,14 +70,14 @@ function AdminMenuAdd() {
         <div class="admin-header-left">
           <button class="header-button" onClick={() => navigator('/admin/menu/list')}>Back</button>
         </div>
-        <h1 class="admin-header-title">Table Management</h1>
+        <h1 class="admin-header-title">Management</h1>
         <div class="admin-header-right">
           <span class="admin-header-user">Hello, Admin</span>
         </div>
       </header>
 
-      <main className="admin-content">
-
+      <main className="admin-content">    
+        <h2 className="content-header">Add Menu</h2>
         <form className="admin-form" onSubmit={handleSubmit}>
           {/* Row 1: ชื่อเมนูอาหาร, ราคา, ชนิด */}
           <div className="form-row">

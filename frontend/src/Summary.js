@@ -91,6 +91,14 @@ function Summary() {
       if (!orderResponse.ok) {
         throw new Error(`Order API error! Status: ${orderResponse.status}`);
       }
+
+      const tableResponse = await fetch(`${API_URL}/api/table/status/${tableID}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ table_status: 1 }),
+      });
   
       const orderResult = await orderResponse.json();
       const order_id = orderResult.insertId;
@@ -192,7 +200,7 @@ function Summary() {
         <select id="table-number" class="table-selection-dropdown"  value={tableID} onChange={handleTableChange}>
           <option value={-1} hidden>-- กรุณาเลือกโต๊ะ --</option>
           {
-            tables.map((table) => (
+            tables.filter((table) => table.table_status == 0).map((table) => (
               <option value={table.table_id}>โต๊ะ {table.table_number}</option>
             ))
           }

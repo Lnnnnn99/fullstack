@@ -26,7 +26,7 @@ function Payment() {
         body: JSON.stringify({
           "order_id": order_id,
           "payment_method": 2,
-          "payment_status": 2,
+          "payment_status": 1,
           "payment_amount": total_price,
           "payment_currency": "THB",
         })

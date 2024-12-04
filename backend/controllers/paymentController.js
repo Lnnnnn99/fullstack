@@ -12,6 +12,18 @@ exports.getPayment = (req, res) => {
     })
 }
 
+exports.getPaymentByOrderID = (req, res) => {
+    const order_id = req.params.order_id
+
+    const query = "SELECT * FROM tab_payment WHERE order_id = ?"
+    conn.query(query, [order_id], (err, results) => {
+        if(err){
+           return res.json(err) 
+        }
+        res.json(results)
+    })
+}
+
 
 exports.insertPayment = (req, res) => {
     const order_id = req.body.order_id

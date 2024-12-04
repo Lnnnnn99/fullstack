@@ -11,6 +11,7 @@ function EmployeeOrder() {
 
   const [tables, setTables] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
+  const [payment, setPayment] = useState(null)
 
   const [order, setOrder] = useState([])
 
@@ -19,9 +20,21 @@ function EmployeeOrder() {
       try {
         const orderResponse = await fetch(`${API_URL}/api/order/table/` + table_id);
         if (!orderResponse.ok) throw new Error(`Error: ${orderResponse.status}`);
-        const order = await orderResponse.json();
+        const orders = await orderResponse.json();
         
-        const orderDetailResponse = await fetch(`${API_URL}/api/order_detail/` + order[0].order_id);
+        if(orders.length == 0){
+          navigate('/employee/table/list')
+          return;
+        }
+
+        const order = orders.find((o) => o.order_status == 0)
+
+        if(!order){
+          navigate('/employee/table/list')
+          return;
+        }
+
+        const orderDetailResponse = await fetch(`${API_URL}/api/order_detail/` + order.order_id);
         if (!orderDetailResponse.ok) throw new Error(`Error: ${orderDetailResponse.status}`);
         const orderDetail = await orderDetailResponse.json();
 
@@ -30,6 +43,27 @@ function EmployeeOrder() {
         )
 
         setOrder(orderDetail)
+
+        fetchPayment();
+
+        // setTables(data);
+      } catch (error) {
+        Swal.fire("Error", "Failed to fetch tables.", "error");
+      }
+    };
+
+    const fetchPayment = async () => {
+      try {
+        const orderResponse = await fetch(`${API_URL}/api/order/table/` + table_id);
+        if (!orderResponse.ok) throw new Error(`Error: ${orderResponse.status}`);
+        const order = await orderResponse.json(); //  order[0].order_id
+        
+        const paymentResponse = await fetch(`${API_URL}/api/payment/order/` + order[0].order_id);
+        if (!paymentResponse.ok) throw new Error(`Error: ${paymentResponse.status}`);
+        const payments = await paymentResponse.json();
+
+        setPayment(payments[0])
+        
         // setTables(data);
       } catch (error) {
         Swal.fire("Error", "Failed to fetch tables.", "error");
@@ -37,30 +71,58 @@ function EmployeeOrder() {
     };
 
     fetchTables();
+    
   }, []);
 
-  const updateTableStatus = async (table_id, table_number, newStatus) => {
+  const confirmPayment = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/table/${table_id}`, {
+      const paymentResponse = await fetch(`${API_URL}/api/payment/status`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ table_number:table_number, table_status: newStatus }),
+        body: JSON.stringify({
+           payment_id: payment.payment_id,
+           payment_status: 2 
+        }),
       });
 
-      if (!response.ok) throw new Error("Failed to update status");
-      setTables((prev) =>
-        prev.map((table) =>
-          table.table_id === table_id
-            ? { ...table, table_status: newStatus }
-            : table
-        )
-      );
+      const tableResponse = await fetch(`${API_URL}/api/table/status/` + table_id, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+           table_status: 0 
+        }),
+      });
+
+      const orderResponse = await fetch(`${API_URL}/api/order/table/` + table_id);
+      if (!orderResponse.ok) throw new Error(`Error: ${orderResponse.status}`);
+      const order = await orderResponse.json(); //  order[0].order_id
+
+      const updateOrderResponse = await fetch(`${API_URL}/api/order/status`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+           order_id: order[0].order_id,
+           order_status: 1 
+        }),
+      });
+
+      Swal.fire({
+        title: "สำเร็จ!",
+        text: "ยืนยันชำระเงินสำเร็จ",
+        icon: "success",
+        confirmButtonText: "ตกลง",
+      });
+      navigate('/employee/table/list')
     } catch (error) {
-      Swal.fire("Error", "Failed to update table status.", "error");
+      // Swal.fire("Error", "Failed to update table status.", "error");
     }
-  };
+  }
 
   return (
     <div className='admin-container'>
@@ -110,7 +172,16 @@ function EmployeeOrder() {
             </div>
 
             <div class="confirm-order">
-                <button class="confirm-button">ยืนยันการชำระเงิน</button>
+              {
+                !payment && (
+                  <button class="confirm-button">รอการชำระเงิน</button>
+                )
+              }
+              {
+                payment && (
+                  <button class="confirm-button" onClick={() => confirmPayment()}>ยืนยันการชำระเงิน</button>
+                )
+              }
             </div>
         </div>
 

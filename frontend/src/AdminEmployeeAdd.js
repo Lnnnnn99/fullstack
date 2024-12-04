@@ -44,7 +44,7 @@ function AdminEmployeeAdd() {
         <div class="admin-header-left">
           <button class="header-button" onClick={() => navigate('/admin/employee/list')}>Back</button>
         </div>
-        <h1 class="admin-header-title">Table Management</h1>
+        <h1 class="admin-header-title">Management</h1>
         <div class="admin-header-right">
           <span class="admin-header-user">Hello, Admin</span>
         </div>
@@ -52,7 +52,7 @@ function AdminEmployeeAdd() {
 
 
       <main className="admin-content">
-
+        <h2 className="content-header">Add Employee</h2>
         <form className="admin-form" onSubmit={handleSubmit}>
 
           <div className="form-row">

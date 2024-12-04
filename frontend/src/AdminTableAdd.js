@@ -60,13 +60,14 @@ function AdminTableAdd() {
         <div class="admin-header-left">
           <button class="header-button" onClick={() => navigate('/admin/table/list')}>Back</button>
         </div>
-        <h1 class="admin-header-title">Table Management</h1>
+        <h1 class="admin-header-title">Management</h1>
         <div class="admin-header-right">
           <span class="admin-header-user">Hello, Admin</span>
         </div>
       </header>
 
       <main className="admin-content">
+      <h2 className="content-header">Add table</h2>
         <form className="admin-form" onSubmit={handleSubmit}>
           <div className="form-row">
             <div className="form-group">

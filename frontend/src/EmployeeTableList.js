@@ -30,7 +30,7 @@ function EmployeeTableList() {
         <div class="admin-header-left">
           {/* <button class="header-button" onClick={() => navigate('/admin/menu')}>Menu</button> */}
         </div>
-        <h1 class="admin-header-title">Table Management</h1>
+        <h1 class="admin-header-title">Management</h1>
         <div class="admin-header-right">
           <span class="admin-header-user">Hello, Admin</span>
         </div>
@@ -49,9 +49,17 @@ function EmployeeTableList() {
           {
             tables.map((table) => (
               <div>
-                <div 
-                  className={`table-card ${table.table_status == 0 ? 'available' : 'unavailable'}`}
-                  onClick={() => navigate('/employee/order/' + table.table_id)}>โต๊ะ {table.table_number}</div>
+                {
+                  table.table_status == 0 && (
+                    <div className={`table-card available`}>โต๊ะ {table.table_number}</div>
+                  )
+                }
+                {
+                  table.table_status == 1 && (
+                    <div className={`table-card unavailable`}
+                      onClick={() => navigate('/employee/order/' + table.table_id)}>โต๊ะ {table.table_number}</div>
+                  )
+                }
               </div>              
             ))
           }
