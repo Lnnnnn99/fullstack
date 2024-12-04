@@ -11,25 +11,29 @@
 สร้าง Database และ Tables เริ่มต้น:
 ```bash
 node setupDatabase.js
+```
 
 3. **ติดตั้ง Library ที่จำเป็น**:
 ติดตั้ง Library ที่จำเป็น:
 ```bash
 npm install
+```
 
 3. **รัน server**:
 รัน server:
 ```bash
 npm start
-
+```
 
 ## **Frontend**
 1. **ติดตั้ง Library ที่จำเป็น**:
 ติดตั้ง Library ที่จำเป็น:
 ```bash
 npm install
+```
 
 2. **รัน server**:
 รัน server:
 ```bash
 npm start
+```
