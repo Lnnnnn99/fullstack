@@ -9,9 +9,9 @@ function EmployeeOrder() {
   const navigate = useNavigate();
   const { table_id } = useParams();
 
-  const [tables, setTables] = useState([]);
+  const [table, setTable] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
-  const [payment, setPayment] = useState(null)
+  const [payment, setPayment] = useState([])
 
   const [order, setOrder] = useState([])
 
@@ -42,6 +42,8 @@ function EmployeeOrder() {
           orderDetail.reduce((a, v) => a + (v.order_detail_quantity * v.order_detail_price), 0)
         )
 
+        setTable(order)
+
         setOrder(orderDetail)
 
         fetchPayment();
@@ -62,7 +64,8 @@ function EmployeeOrder() {
         if (!paymentResponse.ok) throw new Error(`Error: ${paymentResponse.status}`);
         const payments = await paymentResponse.json();
 
-        setPayment(payments[0])
+        setPayment(payments.filter((p) => p.payment_status != "Complete"))
+        // setPayment(payments)
         
         // setTables(data);
       } catch (error) {
@@ -127,12 +130,11 @@ function EmployeeOrder() {
   return (
     <div className='admin-container'>
         <div class="order-summary-container">
-
             <div class="order-summary-header">
                 <div className="operator-item" style={{position: 'absolute', bottom: '18px'}} onClick={() => navigate("/employee/table/list")}>
                     <i class="fa-solid fa-arrow-left"></i>
                 </div>
-                <h1 class="order-summary-title">รายการอาหาร</h1>
+                <h1 class="order-summary-title">รายการอาหาร โต๊ะ {table.table_number}</h1>
                 <button class="add-more-button" onClick={() => navigate('/order/list?table_id=' + table_id)}>สั่งอาหารเพิ่มเติม</button>
             </div>
 
@@ -173,12 +175,12 @@ function EmployeeOrder() {
 
             <div class="confirm-order">
               {
-                !payment && (
+                payment.length == 0 && (
                   <button class="confirm-button">รอการชำระเงิน</button>
                 )
               }
               {
-                payment && (
+                payment.length > 0 && (
                   <button class="confirm-button" onClick={() => confirmPayment()}>ยืนยันการชำระเงิน</button>
                 )
               }

@@ -26,7 +26,7 @@ exports.getOrder = (req, res) => {
 exports.getOrderByTableID = (req, res) => {
     const table_id = req.params.table_id
 
-    const query = "SELECT * FROM tab_order WHERE table_id = ?"
+    const query = "SELECT * FROM tab_order INNER JOIN tab_table ON tab_order.table_id = tab_table.table_id WHERE tab_order.table_id = ?"
     conn.query(query, [table_id], (err, results) => {
         if(err){
            return res.json(err) 
