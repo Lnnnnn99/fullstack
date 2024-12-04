@@ -168,6 +168,7 @@ function Summary() {
                   <div class="item-description">
                     {
                       Object.entries(order.menu_se)
+                      .filter(([key, value]) => value != "" || value?.length != 0)
                       .map(([key, value]) => Array.isArray(value) ? value : [value])
                       .reduce((acc, curr) => acc.concat(curr), [])
                       .join(", ")

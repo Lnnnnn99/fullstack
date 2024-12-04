@@ -8,7 +8,7 @@ const menuRoute = require('./routes/menuRoute')
 const orderRoute = require('./routes/orderRoute')
 const orderDetailRoute = require('./routes/orderDetailRoute')
 const paymentRoute = require('./routes/paymentRoute')
-
+const employeeRoute = require('./routes/employeeRoute')
 
 dotenv.config()
 
@@ -22,6 +22,7 @@ app.use('/api', menuRoute)
 app.use('/api', orderRoute)
 app.use('/api', orderDetailRoute)
 app.use('/api', paymentRoute)
+app.use('/api', employeeRoute)
 
 const PORT = process.env.PORT || 3000
 

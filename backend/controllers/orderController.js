@@ -23,6 +23,18 @@ exports.getOrder = (req, res) => {
     })
 }
 
+exports.getOrderByTableID = (req, res) => {
+    const table_id = req.params.table_id
+
+    const query = "SELECT * FROM tab_order WHERE table_id = ?"
+    conn.query(query, [table_id], (err, results) => {
+        if(err){
+           return res.json(err) 
+        }
+        res.json(results)
+    })
+}
+
 
 exports.insertOrder = (req, res) => {
     const table_id = req.body.table_id

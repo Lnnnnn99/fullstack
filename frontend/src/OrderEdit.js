@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { OrderContext } from './OrderContext';
 
 import Swal from "sweetalert2";
@@ -10,6 +10,12 @@ const API_URL = process.env.REACT_APP_API_URL;
 
 function OrderEdit() {
   const navigator = useNavigate()
+  
+  const [searchParams] = useSearchParams();
+
+  const table_id = searchParams.get("table_id");
+  const menu_id = searchParams.get("menu_id");
+
   const { menu_sequence } = useParams()
   const { orders, updateOrder } = useContext(OrderContext)
 
@@ -74,7 +80,67 @@ function OrderEdit() {
       }
     }
 
-    fetchMenu()
+    const fetchEmployeeMenu = async () => {
+      try{
+        const response = await fetch(API_URL + '/api/menu/' + menu_id)
+        if (!response.ok) {
+          Swal.fire({
+            title: "เกิดข้อผิดพลาด!",
+            text: `ไม่สามารถโหลดข้อมูลได้ (Error: ${response.status})`,
+            icon: "error",
+            confirmButtonText: "ตกลง"
+          }).then(() => {
+            navigator('/order/list/')
+          });
+          return;
+        }
+
+        const orderDetailResponse = await fetch(API_URL + '/api/order_detail_by_id/' + menu_sequence)
+        if (!orderDetailResponse.ok) {
+          Swal.fire({
+            title: "เกิดข้อผิดพลาด!",
+            text: `ไม่สามารถโหลดข้อมูลได้ (Error: ${orderDetailResponse.status})`,
+            icon: "error",
+            confirmButtonText: "ตกลง"
+          }).then(() => {
+            navigator('/order/list/')
+          });
+          return;
+        }
+        
+        const orderDetail = await orderDetailResponse.json()
+
+        const data = await response.json()
+        setMenu(data[0])
+        
+        const optionsData = data[0].menu_se
+        setOptions(optionsData)
+          
+        const defaultForm = {};
+        for (const [key, value] of Object.entries(orderDetail[0].order_detail_menu_se)) {
+          defaultForm[key] = value
+        }
+  
+        setFormState(defaultForm);
+        setQuantity(orderDetail[0].order_detail_quantity);
+  
+      } catch (err) {
+        Swal.fire({
+          title: "เกิดข้อผิดพลาด!",
+          text: "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้",
+          icon: "error",
+          confirmButtonText: "ตกลง"
+        }).then(() => {
+          navigator("/order/list");
+        });
+      }
+    }
+
+    if(table_id){
+      fetchEmployeeMenu()
+    }else{
+      fetchMenu()
+    }
   }, [])
 
   function calculatePrice(menuPrice, formState, options) {
@@ -133,26 +199,88 @@ function OrderEdit() {
     });
   };
 
-  function confirmButton(){
-    Swal.fire({
-      title: "ต้องการลบรายการออกจากตะกร้าใช่หรือไหม",
-      showCancelButton: true,
-      confirmButtonText: "ลบรายการ",
-      cancelButtonText: `ยกเลิก`
-    }).then((result) => {
-      if (result.isConfirmed) {
-        updateOrder({
-          'menu_sequence': menu_sequence,
-          'menu_id': menu.menu_id,
-          'menu_name': menu.menu_name,
-          'menu_price': calculatePrice(menu.menu_price, formState, options),
-          'menu_quantity': quantity,
-          'menu_pic': menu.menu_pic,
-          'menu_se': formState,
-        })
-        navigator('/order/list')
+  async function confirmButton(){
+    if (table_id) {
+      const orderResponse = await fetch(API_URL + '/api/order/table/' + table_id)
+  
+      const orders = await orderResponse.json()
+      const order = orders[0]
+
+      const orderDetailMenuSe = JSON.stringify(formState);
+
+      if(quantity == 0){
+        const orderDetailResponse = await fetch(`${API_URL}/api/order_detail/`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            order_detail_id: menu_sequence
+          }),
+        });
+  
+        if (!orderDetailResponse.ok) {
+          throw new Error(
+            `Order Detail API error! Status: ${orderDetailResponse.status}`
+          );
+        }
+      }else{
+        const orderDetailResponse = await fetch(`${API_URL}/api/order_detail/`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            order_detail_id: menu_sequence,
+            order_id: order.order_id,
+            menu_id: menu.menu_id,
+            order_detail_menu_se: orderDetailMenuSe,
+            order_detail_quantity: quantity,
+            order_detail_price: calculatePrice(menu.menu_price, formState, options),
+            order_detail_substatus: 0,
+          }),
+        });
+  
+        if (!orderDetailResponse.ok) {
+          throw new Error(
+            `Order Detail API error! Status: ${orderDetailResponse.status}`
+          );
+        }
       }
-    });
+
+      navigator(`/employee/order/${table_id}`);
+    }else if(quantity == 0){
+      Swal.fire({
+        title: "ต้องการลบรายการออกจากตะกร้าใช่หรือไหม",
+        showCancelButton: true,
+        confirmButtonText: "ลบรายการ",
+        cancelButtonText: `ยกเลิก`
+      }).then((result) => {
+        if (result.isConfirmed) {
+          updateOrder({
+            'menu_sequence': menu_sequence,
+            'menu_id': menu.menu_id,
+            'menu_name': menu.menu_name,
+            'menu_price': calculatePrice(menu.menu_price, formState, options),
+            'menu_quantity': quantity,
+            'menu_pic': menu.menu_pic,
+            'menu_se': formState,
+          })
+          navigator('/order/list')
+        }
+      });
+    }else{
+      updateOrder({
+        'menu_sequence': menu_sequence,
+        'menu_id': menu.menu_id,
+        'menu_name': menu.menu_name,
+        'menu_price': calculatePrice(menu.menu_price, formState, options),
+        'menu_quantity': quantity,
+        'menu_pic': menu.menu_pic,
+        'menu_se': formState,
+      })
+      navigator('/order/list')
+    }
   }
 
   return (

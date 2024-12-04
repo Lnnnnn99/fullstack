@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import Swal from "sweetalert2";
 
@@ -10,6 +10,10 @@ const API_URL = process.env.REACT_APP_API_URL;
 function OrderList() {
   const navigator = useNavigate()
   
+  const [searchParams] = useSearchParams();
+
+  const table_id = searchParams.get("table_id");
+
   const [menus, setMenus] = useState(null)
   const [filterMenu, setFilterMenu] = useState([])
   const [types, setTypes] = useState([{'menu_type': 'All'}])
@@ -47,7 +51,7 @@ function OrderList() {
         });
       }
     }
-  
+
     const fetchTypes = async () => {
       try{
         const response = await fetch(API_URL + "/api/types")
@@ -113,10 +117,19 @@ function OrderList() {
     setSearch(search)
   }
 
-  function clickAddOrder(menu_id){
-    navigator('/order/add/' + menu_id)
-  }
+  // function clickAddOrder(menu_id){
+  //   navigator('/order/add/' + menu_id)
+  // }
 
+  function clickAddOrder(menu_id) {
+    // เพิ่ม table_id ใน URL ถ้ามีค่า
+    if (table_id) {
+      navigator(`/order/add/${menu_id}?table_id=${table_id}`);
+    } else {
+      navigator(`/order/add/${menu_id}`);
+    }
+  }
+  
   return (
     <div className='container'>
       

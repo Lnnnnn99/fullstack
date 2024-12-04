@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 
 import { OrderContext } from "./OrderContext";
 
@@ -11,6 +11,10 @@ const API_URL = process.env.REACT_APP_API_URL;
 
 function OrderAdd() {
   const navigator = useNavigate();
+  
+  const [searchParams] = useSearchParams();
+  const table_id = searchParams.get("table_id");
+
   const { menu_id } = useParams();
   const { addOrder } = useContext(OrderContext);
 
@@ -31,7 +35,11 @@ function OrderAdd() {
             icon: "error",
             confirmButtonText: "ตกลง"
           }).then(() => {
-            navigator('/order/list/')
+            if (table_id) {
+              navigator(`/order/list?table_id=${table_id}`);
+            } else {
+              navigator("/order/list");
+            }
           });
           return;
         }
@@ -73,7 +81,11 @@ function OrderAdd() {
           icon: "error",
           confirmButtonText: "ตกลง"
         }).then(() => {
-          navigator("/order/list");
+          if (table_id) {
+            navigator(`/order/list?table_id=${table_id}`);
+          } else {
+            navigator("/order/list");
+          }
         });
       }
     }
@@ -143,16 +155,48 @@ function OrderAdd() {
     });
   };
 
-  function confirmButton() {
-    addOrder({
-      menu_id: menu.menu_id,
-      menu_name: menu.menu_name,
-      menu_price: calculatePrice(menu.menu_price, formState, options),
-      menu_quantity: quantity,
-      menu_pic: menu.menu_pic,
-      menu_se: formState
-    });
-    navigator("/order/list");
+  async function confirmButton() {
+    if (table_id) {
+      const orderResponse = await fetch(API_URL + '/api/order/table/' + table_id)
+  
+      const orders = await orderResponse.json()
+      const order = orders[0]
+
+      const orderDetailMenuSe = JSON.stringify(formState);
+
+      const orderDetailResponse = await fetch(`${API_URL}/api/order_detail/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          order_id: order.order_id,
+          menu_id: menu.menu_id,
+          order_detail_menu_se: orderDetailMenuSe,
+          order_detail_quantity: quantity,
+          order_detail_price: calculatePrice(menu.menu_price, formState, options),
+          order_detail_substatus: 0,
+        }),
+      });
+
+      if (!orderDetailResponse.ok) {
+        throw new Error(
+          `Order Detail API error! Status: ${orderDetailResponse.status}`
+        );
+      }
+
+      navigator(`/employee/order/${table_id}`);
+    } else {
+      addOrder({
+        menu_id: menu.menu_id,
+        menu_name: menu.menu_name,
+        menu_price: calculatePrice(menu.menu_price, formState, options),
+        menu_quantity: quantity,
+        menu_pic: menu.menu_pic,
+        menu_se: formState
+      });
+      navigator("/order/list");
+    }
   }
 
   return (
