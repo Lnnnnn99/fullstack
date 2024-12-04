@@ -60,7 +60,7 @@ function EmployeeOrder() {
         if (!orderResponse.ok) throw new Error(`Error: ${orderResponse.status}`);
         const order = await orderResponse.json(); //  order[0].order_id
         
-        const paymentResponse = await fetch(`${API_URL}/api/payment/order/` + order[0].order_id);
+        const paymentResponse = await fetch(`${API_URL}/api/payment/order/` + order.find((o) => o.order_status == 0).order_id);
         if (!paymentResponse.ok) throw new Error(`Error: ${paymentResponse.status}`);
         const payments = await paymentResponse.json();
 
@@ -85,7 +85,7 @@ function EmployeeOrder() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-           payment_id: payment.payment_id,
+           payment_id: payment[0].payment_id,
            payment_status: 2 
         }),
       });
