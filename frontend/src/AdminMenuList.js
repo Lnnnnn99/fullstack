@@ -133,13 +133,11 @@ function AdminMenuList() {
                   <button class="edit-button" style={{color: 'red'}} onClick={() => deleteMenu(menu.menu_id)}>ลบ</button>
                 </div>
                 <div className="food-checkbox">
-                  <input 
-                    type="checkbox"
-                    checked={menu.menu_status == 1}
-                    onChange={() =>
-                      updateMenuStatus(menu.menu_id, menu.menu_status == 1 ? 0 : 1)
-                    }
-                   />
+                   <i 
+                      className={`fa-solid ${menu.menu_status === 1 ? 'fa-eye' : 'fa-eye-slash'}`}
+                      onClick={() => updateMenuStatus(menu.menu_id, menu.menu_status === 1 ? 0 : 1)}
+                      style={{ cursor: 'pointer', marginRight: '20px' }}
+                    ></i>
                 </div>
               </div>
             ))

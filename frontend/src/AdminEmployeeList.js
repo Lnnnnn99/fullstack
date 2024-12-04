@@ -92,13 +92,12 @@ function AdminEmployeeList() {
                   </div>
                   <div className="table-checkbox">
                     <label>
-                      <input
-                        type="checkbox"
-                        checked={employee.employee_status == 1}
-                          onChange={() =>
-                            updateEmployeeStatus(employee.employee_id, employee.employee_status == 1 ? 0 : 1)
-                          }
-                      />
+                      <i 
+                        className={`fa-solid ${employee.employee_status === 1 ? 'fa-eye' : 'fa-eye-slash'}`}
+                        onClick={() => updateEmployeeStatus(employee.employee_id, employee.employee_status == 1 ? 0 : 1)}
+                        style={{ cursor: 'pointer' }}
+                      ></i>
+                        
                     </label>
                   </div>
                 </div>
